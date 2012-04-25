@@ -36,8 +36,10 @@ module Rabl
     attr_writer   :xml_options
     attr_accessor :cache_sources
     attr_accessor :cache_all_output
+    attr_writer   :collection_classes
 
     DEFAULT_XML_OPTIONS = { :dasherize  => true, :skip_types => false }
+    ENUMERABLE_CLASSES  = [ 'Array', 'Hash', 'ActiveRecord::Relation', 'Sequel::Dataset' ]
 
     def initialize
       @include_json_root     = true
@@ -55,6 +57,7 @@ module Rabl
       @xml_options           = {}
       @cache_sources         = false
       @cache_all_output      = false
+      @enumerable_classes    = nil
     end
 
     # @param [Symbol, String, #encode] engine_name The name of a JSON engine,
@@ -100,6 +103,11 @@ module Rabl
     # Returns merged default and inputted xml options
     def default_xml_options
       @_default_xml_options ||= @xml_options.reverse_merge(DEFAULT_XML_OPTIONS)
+    end
+
+    # @return Array of default and configured collection class names
+    def enumerable_classes
+      @enumerable_classes ? (@enumerable_classes | ENUMERABLE_CLASSES) : ENUMERABLE_CLASSES
     end
 
     private
